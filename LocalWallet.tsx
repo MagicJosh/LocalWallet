@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import {
-  Plus, Trash2, CreditCard, X, ArrowLeft,
-  Wallet, Camera, Share, ShieldCheck, Heart
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Plus, Trash2, CreditCard, Search, X, ArrowLeft, 
+  Wallet, Camera, Share, ChevronDown, Check, ShieldCheck, Heart 
 } from 'lucide-react';
 
 // --- 1. MOCK SERVICES (Internalized for Single-File Execution) ---
@@ -47,12 +47,38 @@ const deleteCard = (id: string) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
 };
 
+const markAsUsed = (id: string) => {
+  const cards = getAllCards().map(c => c.id === id ? { ...c, lastUsed: Date.now() } : c);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+};
+
+const getCardById = (id: string): Card | undefined => {
+  return getAllCards().find(c => c.id === id);
+};
+
 // Barcode Service
 const detectBarcodeFormat = (code: string): BarcodeFormat => {
   if (!code) return 'CODE128';
   if (/^[0-9]{13}$/.test(code)) return 'EAN13';
   if (/^[0-9]{12}$/.test(code)) return 'UPC';
   return 'CODE128'; // Default fallback
+};
+
+const getAllFormats = () => [
+  { value: 'CODE128', label: 'Code 128 (Standard)' },
+  { value: 'EAN13', label: 'EAN-13' },
+  { value: 'UPC', label: 'UPC-A' },
+  { value: 'QR', label: 'QR Code' },
+  { value: 'PDF417', label: 'PDF417' },
+  { value: 'AZTEC', label: 'Aztec' },
+  { value: 'DATAMATRIX', label: 'Data Matrix' },
+  { value: 'CODABAR', label: 'Codabar' },
+  { value: 'CODE39', label: 'Code 39' },
+  { value: 'ITF', label: 'ITF' },
+];
+
+const getFormatDisplayName = (format: string) => {
+  return getAllFormats().find(f => f.value === format)?.label || format;
 };
 
 // --- 2. SHARED COMPONENTS ---
