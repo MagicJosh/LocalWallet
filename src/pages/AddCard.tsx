@@ -46,8 +46,8 @@ function CardPreview({ storeName, cardNumber, gradientClass }: CardPreviewProps)
 
   return (
     <div className={`w-full card-aspect rounded-2xl shadow-2xl relative overflow-hidden transition-all duration-500 bg-gradient-to-br ${gradientClass}`}>
-      <div className="absolute inset-0 p-12 flex flex-col justify-between z-10">
-        <div className="flex justify-between items-start gap-6">
+      <div className="absolute inset-0 p-16 flex flex-col justify-between z-10">
+        <div className="flex justify-between items-start gap-8">
           <span className="font-black text-2xl tracking-tighter text-white drop-shadow-md truncate flex-1">
             {storeName || 'STORE NAME'}
           </span>
@@ -179,7 +179,7 @@ export function AddCard() {
       </header>
 
       <div className="pb-12 flex-1 flex flex-col items-center">
-        <div className="w-full max-w-sm px-6">
+        <div className="w-full max-w-sm px-[18px]">
 
         {/* SECTION 1: Live Card Preview */}
         <div className="mt-4 mb-10 transform transition-all duration-300 hover:scale-[1.02]">
@@ -197,7 +197,7 @@ export function AddCard() {
         <div className="space-y-12">
 
           {/* Store Name Input */}
-          <div className="space-y-4">
+          <div className="space-y-4 mb-3">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
               Store Details
             </label>
@@ -212,7 +212,7 @@ export function AddCard() {
           </div>
 
           {/* Card Number Input with Scan Button */}
-          <div className="space-y-2 relative">
+          <div className="space-y-2 relative mb-3">
             <input
               type="text"
               value={cardNumber}
@@ -232,7 +232,7 @@ export function AddCard() {
           </div>
 
           {/* Barcode Format Selector */}
-          <div className="relative">
+          <div className="relative mb-3">
             <button
               onClick={() => setShowFormatPicker(!showFormatPicker)}
               className="w-full h-14 bg-slate-900 border border-slate-800 rounded-2xl px-5 flex items-center justify-between text-slate-400 transition-all hover:border-slate-700"
@@ -266,7 +266,7 @@ export function AddCard() {
         </div>
 
         {/* Bottom Action Button */}
-        <div className="mt-auto pt-16">
+        <div className="mt-auto pt-12">
           <button
             onClick={handleSubmit}
             disabled={!isValid || loading}

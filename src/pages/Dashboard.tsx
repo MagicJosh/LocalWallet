@@ -43,8 +43,8 @@ function CardPreview({ storeName, cardNumber, brandColor }: CardPreviewProps) {
 
   return (
     <div className={`w-full aspect-[1.586] rounded-2xl shadow-2xl relative overflow-hidden transition-all duration-500 bg-gradient-to-br ${brandColor || 'from-slate-700 to-slate-800'}`}>
-      <div className="absolute inset-0 p-12 flex flex-col justify-between z-10">
-        <div className="flex justify-between items-start gap-6">
+      <div className="absolute inset-0 p-16 flex flex-col justify-between z-10">
+        <div className="flex justify-between items-start gap-8">
           <span className="font-black text-2xl tracking-tighter text-white drop-shadow-md truncate flex-1">
             {storeName || 'STORE NAME'}
           </span>
@@ -127,7 +127,7 @@ export function Dashboard() {
       <div className="pb-24 space-y-10">
         {/* Search */}
         <div className="flex justify-center">
-          <div className="w-full max-w-sm mx-6">
+          <div className="w-full max-w-sm mx-[18px]">
             <div className="relative">
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
@@ -142,7 +142,7 @@ export function Dashboard() {
         </div>
 
         <div className="flex justify-center">
-          <div className="w-full max-w-sm mx-6">
+          <div className="w-full max-w-sm mx-[18px]">
           {cards.length === 0 ? (
             <div className="py-20 flex flex-col items-center text-slate-500 opacity-50">
               <CreditCard className="w-16 h-16 mb-4" />
