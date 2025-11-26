@@ -126,20 +126,23 @@ export function Dashboard() {
       {/* Main Content Area (Scrollable) */}
       <div className="pb-24 space-y-10">
         {/* Search */}
-        <div className="px-10">
-          <div className="relative">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-            <input
-              type="text"
-              placeholder="Search passes..."
-              value={term}
-              onChange={e => setTerm(e.target.value)}
-              className="w-full h-14 bg-slate-900 rounded-2xl pl-14 pr-6 text-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-            />
+        <div className="flex justify-center">
+          <div className="w-full max-w-sm mx-6">
+            <div className="relative">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Search passes..."
+                value={term}
+                onChange={e => setTerm(e.target.value)}
+                className="w-full h-14 bg-slate-900 rounded-2xl pl-14 pr-6 text-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="px-10">
+        <div className="flex justify-center">
+          <div className="w-full max-w-sm mx-6">
           {cards.length === 0 ? (
             <div className="py-20 flex flex-col items-center text-slate-500 opacity-50">
               <CreditCard className="w-16 h-16 mb-4" />
@@ -167,6 +170,7 @@ export function Dashboard() {
               )}
             </div>
           )}
+          </div>
         </div>
       </div>
 

@@ -178,7 +178,8 @@ export function AddCard() {
         <div className="w-16" />
       </header>
 
-      <div className="px-6 pb-12 flex-1 flex flex-col">
+      <div className="pb-12 flex-1 flex flex-col items-center">
+        <div className="w-full max-w-sm px-6">
 
         {/* SECTION 1: Live Card Preview */}
         <div className="mt-4 mb-10 transform transition-all duration-300 hover:scale-[1.02]">
@@ -273,6 +274,7 @@ export function AddCard() {
           >
             {loading ? 'Adding...' : 'Add to Wallet'}
           </button>
+        </div>
         </div>
       </div>
 
