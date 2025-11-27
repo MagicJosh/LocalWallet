@@ -255,31 +255,35 @@ function DashboardView({ setView, setSelectedCard }: any) {
         </button>
       </header>
 
-      <div className="pb-24 space-y-8 px-6 mt-2">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search passes..."
-            value={term}
-            onChange={e => setTerm(e.target.value)}
-            className="w-full h-14 bg-slate-900 rounded-2xl px-6 text-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-          />
+      <div className="pb-24 space-y-8 flex flex-col items-center mt-2">
+        <div className="w-full max-w-sm px-[18px]">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search passes..."
+              value={term}
+              onChange={e => setTerm(e.target.value)}
+              className="w-full h-14 bg-slate-900 rounded-2xl px-6 text-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            />
+          </div>
         </div>
 
-        {cards.length === 0 ? (
-          <div className="py-20 flex flex-col items-center text-slate-500 opacity-50">
-            <CreditCard className="w-16 h-16 mb-4" />
-            <p>No cards yet</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filtered.map(card => (
-              <div key={card.id} onClick={() => { setSelectedCard(card); setView('detail'); }} className="cursor-pointer active-shrink">
-                <CardPreview storeName={card.storeName} cardNumber={card.cardNumber} gradientClass={card.brandColor || 'from-slate-700 to-slate-800'} />
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="w-full max-w-sm px-[18px]">
+          {cards.length === 0 ? (
+            <div className="py-20 flex flex-col items-center text-slate-500 opacity-50">
+              <CreditCard className="w-16 h-16 mb-4" />
+              <p>No cards yet</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filtered.map(card => (
+                <div key={card.id} onClick={() => { setSelectedCard(card); setView('detail'); }} className="cursor-pointer active-shrink">
+                  <CardPreview storeName={card.storeName} cardNumber={card.cardNumber} gradientClass={card.brandColor || 'from-slate-700 to-slate-800'} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="fixed bottom-8 left-0 right-0 flex justify-center pointer-events-none z-30">
@@ -318,48 +322,50 @@ function AddCardView({ setView }: any) {
         <div className="w-16" />
       </header>
 
-      <div className="px-6 pb-12 flex-1 flex flex-col">
-        <div className="mt-4 mb-10 transform transition-all duration-300 hover:scale-[1.02]">
-          <CardPreview storeName={storeName} cardNumber={cardNumber} gradientClass={brandGradient} />
-          <p className="text-center text-slate-500 text-xs mt-4 font-medium tracking-wide uppercase">Preview</p>
-        </div>
-
-        {/* FIXED SPACING SECTION */}
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Store Details</label>
-            <input
-              type="text"
-              value={storeName}
-              onChange={(e) => setStoreName(e.target.value)}
-              placeholder="Store Name (e.g. Ikea)"
-              className="w-full h-14 bg-slate-900 border border-slate-800 rounded-2xl px-5 text-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
-              autoFocus
-            />
+      <div className="pb-12 flex-1 flex flex-col items-center">
+        <div className="w-full max-w-sm px-[18px]">
+          <div className="mt-4 mb-10 transform transition-all duration-300 hover:scale-[1.02]">
+            <CardPreview storeName={storeName} cardNumber={cardNumber} gradientClass={brandGradient} />
+            <p className="text-center text-slate-500 text-xs mt-4 font-medium tracking-wide uppercase">Preview</p>
           </div>
 
-          <div className="relative">
-            <input
-              type="text"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-              placeholder="Card Number"
-              className="w-full h-14 bg-slate-900 border border-slate-800 rounded-2xl pl-5 pr-14 font-mono text-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
-            />
-            <button onClick={() => setShowScanner(true)} className="absolute right-2 top-2 w-10 h-10 flex items-center justify-center text-blue-500 hover:bg-blue-500/10 rounded-xl transition-colors active-shrink">
-              <Camera className="w-6 h-6" />
+          {/* FIXED SPACING SECTION */}
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Store Details</label>
+              <input
+                type="text"
+                value={storeName}
+                onChange={(e) => setStoreName(e.target.value)}
+                placeholder="Store Name (e.g. Ikea)"
+                className="w-full h-14 bg-slate-900 border border-slate-800 rounded-2xl px-5 text-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
+                autoFocus
+              />
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+                placeholder="Card Number"
+                className="w-full h-14 bg-slate-900 border border-slate-800 rounded-2xl pl-5 pr-14 font-mono text-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
+              />
+              <button onClick={() => setShowScanner(true)} className="absolute right-2 top-2 w-10 h-10 flex items-center justify-center text-blue-500 hover:bg-blue-500/10 rounded-xl transition-colors active-shrink">
+                <Camera className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="h-6"></div>
+
+            <button
+              onClick={handleSave}
+              disabled={!storeName || !cardNumber}
+              className="w-full h-14 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:bg-slate-800 text-white font-bold rounded-2xl shadow-lg shadow-blue-900/20 active-shrink flex items-center justify-center gap-2 text-[17px] transition-all"
+            >
+              Add to Wallet
             </button>
           </div>
-        </div>
-
-        <div className="mt-auto pt-12 w-full">
-          <button
-            onClick={handleSave}
-            disabled={!storeName || !cardNumber}
-            className="w-full h-14 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:bg-slate-800 text-white font-bold rounded-2xl shadow-lg shadow-blue-900/20 active-shrink flex items-center justify-center gap-2 text-[17px] transition-all"
-          >
-            Add to Wallet
-          </button>
         </div>
       </div>
     </NativePage>
