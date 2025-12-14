@@ -1,23 +1,33 @@
 @import "tailwindcss";
 
+/*
+ * LocalWallet - Global Styles
+ *
+ * Apple Wallet-inspired design system:
+ * - Pure black background
+ * - iOS-style blur effects
+ * - Spring physics animations
+ * - Native mobile feel
+ */
+
+/* CSS Variables */
 :root {
   --background: #000000;
-  --surface: #0f172a; /* slate-900 */
-  --surface-elevated: #1e293b; /* slate-800 */
-  --primary: #3b82f6; /* blue-500 */
-  --primary-dark: #2563eb; /* blue-600 */
+  --surface: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --accent: #007AFF;
   --text-primary: #FFFFFF;
-  --text-secondary: #94a3b8; /* slate-400 */
-  --text-muted: #64748b; /* slate-500 */
-  --separator: rgba(84, 84, 88, 0.65);
+  --text-secondary: #8E8E93;
+  --text-muted: #636366;
 
-  /* Safe area insets */
-  --safe-top: env(safe-area-inset-top);
-  --safe-bottom: env(safe-area-inset-bottom);
-  --safe-left: env(safe-area-inset-left);
-  --safe-right: env(safe-area-inset-right);
+  /* Safe areas */
+  --safe-top: env(safe-area-inset-top, 20px);
+  --safe-bottom: env(safe-area-inset-bottom, 20px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 }
 
+/* Reset */
 * {
   margin: 0;
   padding: 0;
@@ -25,33 +35,122 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Base styles */
 html, body {
-  overscroll-behavior-y: none; /* Stops "Rubber Banding" */
   height: 100%;
-  overflow-x: hidden;
-  position: fixed; /* Fixes the body to prevent native scrolling */
-  width: 100%;
+  overflow: hidden;
   background-color: var(--background);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  touch-action: manipulation;
 }
 
 #root {
   height: 100%;
-  overflow-y: auto; /* Lets only the app content scroll */
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
 
-/* Hide Scrollbar */
-::-webkit-scrollbar { display: none; }
-* { -ms-overflow-style: none; scrollbar-width: none; }
+/* Hide scrollbars but allow scrolling */
+::-webkit-scrollbar {
+  display: none;
+}
 
-/* ============================================
-   SAFE AREA UTILITIES
-   For notched devices (iPhone X+, etc.)
-   ============================================ */
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Input styles */
+input, button, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input:focus,
+button:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Touch interaction feedback */
+.active\:scale-95:active {
+  transform: scale(0.95);
+}
+
+.active\:scale-\[0\.98\]:active {
+  transform: scale(0.98);
+}
+
+.active\:opacity-70:active {
+  opacity: 0.7;
+}
+
+/* Safe area utilities */
 .pt-safe-top {
   padding-top: env(safe-area-inset-top, 20px);
 }
@@ -60,396 +159,79 @@ html, body {
   padding-bottom: env(safe-area-inset-bottom, 20px);
 }
 
-.mt-safe-top {
-  margin-top: env(safe-area-inset-top, 20px);
+/* Blur backgrounds */
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
-.pt-safe {
-  padding-top: env(safe-area-inset-top);
+/* Card aspect ratio (credit card proportions) */
+.aspect-\[1\.586\] {
+  aspect-ratio: 1.586;
 }
 
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.safe-area-top {
-  padding-top: env(safe-area-inset-top);
-}
-
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Combined safe area padding */
-.safe-area-inset {
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
-
-input, button {
-  font-family: inherit;
-}
-
-input:focus {
-  outline: none;
-}
-
-/* ============================================
-   iOS-STYLE BLUR BACKGROUNDS
-   ============================================ */
-.blur-header {
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.blur-bg {
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  background-color: rgba(28, 28, 30, 0.8);
-}
-
-.blur-bg-light {
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Card with Apple-style depth */
-.card-elevated {
-  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.1),
-    0 8px 16px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-.press-scale {
-  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
-}
-
-.press-scale:active {
-  transform: scale(0.97);
-  opacity: 0.9;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(100%); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.3s ease-out forwards;
-}
-
-/* Premium "Squish" Interaction */
-.active-shrink {
-  transition: transform 0.2s;
-}
-.active-shrink:active {
-  transform: scale(0.95);
-}
-
-/* ============================================
-   BUTTONS
-   ============================================ */
-
-/* Primary button - tall touch target */
-.btn-primary {
-  background: var(--primary-dark);
-  color: white;
-  font-weight: 700;
-  font-size: 17px;
-  border-radius: 16px;
-  height: 56px;
-  padding: 0 24px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
-}
-
-.btn-primary:hover {
-  background: var(--primary);
-}
-
-.btn-primary:active {
-  transform: scale(0.98);
-}
-
-.btn-primary:disabled {
-  background: var(--surface-elevated);
-  color: var(--text-muted);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* High-contrast white pill button (for brightness toggle) */
-.btn-pill-white {
-  background: #FFFFFF;
-  color: #000000;
-  font-weight: 600;
-  font-size: 15px;
-  border-radius: 9999px;
-  height: 48px;
-  padding: 0 24px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-pill-white:active {
-  transform: scale(0.96);
-  background: #F0F0F0;
-}
-
-/* ============================================
-   INPUT FIELDS - Native style with borders
-   ============================================ */
-.input-native {
-  width: 100%;
-  height: 56px;
-  background: var(--surface);
-  border: 1px solid var(--surface-elevated);
-  border-radius: 16px;
-  padding: 0 20px;
-  color: var(--text-primary);
-  font-size: 18px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.input-native:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.input-native::placeholder {
-  color: var(--text-muted);
-}
-
-/* Legacy input-field class */
-.input-field {
-  background: var(--surface);
-  border: 1px solid var(--surface-elevated);
-  border-radius: 16px;
-  height: 56px;
-  padding: 0 20px;
-  color: var(--text-primary);
-  font-size: 18px;
-  width: 100%;
-  transition: all 0.2s ease;
-}
-
-.input-field:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.input-field::placeholder {
-  color: var(--text-muted);
-}
-
-/* Input wrapper with icon support */
-.input-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.input-wrapper .input-field,
-.input-wrapper .input-native {
-  padding-right: 56px;
-}
-
-.input-wrapper .input-icon {
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 48px;
-  width: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  color: var(--primary);
-}
-
-.input-wrapper .input-icon:hover {
-  background: rgba(59, 130, 246, 0.1);
-}
-
-.input-wrapper .input-icon:active {
-  transform: translateY(-50%) scale(0.9);
-}
-
-/* ============================================
-   FLOATING ACTION BUTTON
-   ============================================ */
-.fab {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: var(--primary-dark);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  font-weight: 300;
-  border: none;
-  cursor: pointer;
-  box-shadow:
-    0 4px 12px rgba(37, 99, 235, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
-}
-
-.fab:hover {
-  transform: scale(1.05);
-  box-shadow:
-    0 6px 20px rgba(37, 99, 235, 0.5),
-    0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.fab:active {
-  transform: scale(0.95);
-}
-
-/* ============================================
-   SCANNER MODAL - Hide library's default UI
-   ============================================ */
-.scanner-overlay {
-  position: fixed;
-  inset: 0;
-  background: #000000;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Custom viewfinder with shadow mask */
-.scanner-viewfinder {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 280px;
-  height: 160px;
-  border: 3px solid rgba(255, 255, 255, 0.9);
-  border-radius: 20px;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
-  z-index: 10;
-}
-
-.scanner-viewfinder::before,
-.scanner-viewfinder::after {
-  content: '';
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border-color: var(--primary);
-  border-style: solid;
-}
-
-.scanner-viewfinder::before {
-  top: -3px;
-  left: -3px;
-  border-width: 4px 0 0 4px;
-  border-radius: 20px 0 0 0;
-}
-
-.scanner-viewfinder::after {
-  bottom: -3px;
-  right: -3px;
-  border-width: 0 4px 4px 0;
-  border-radius: 0 0 20px 0;
-}
-
-/* NUCLEAR OPTION: Hide html5-qrcode default elements */
+/* Hide html5-qrcode default UI */
 #reader__scan_region,
 #reader__dashboard_section_csr,
 #reader__dashboard_section,
 #reader__dashboard_section_swaplink,
-#reader__camera_selection {
+#reader__camera_selection,
+#reader > div:first-child {
   display: none !important;
-  visibility: hidden !important;
-}
-
-#reader__scan_region img,
-#reader canvas,
-#reader div[style*="border"] {
-  display: none !important;
-  border: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
 }
 
 #reader video {
   object-fit: cover !important;
   width: 100% !important;
   height: 100% !important;
+  border-radius: 0 !important;
 }
 
-/* ============================================
-   iOS SETTINGS STYLE LIST
-   ============================================ */
-.settings-group {
-  background: var(--surface);
-  border-radius: 16px;
-  overflow: hidden;
+#reader {
+  border: none !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-.settings-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  transition: background 0.15s ease;
+/* Prevent text selection on UI elements */
+button, .card, .header {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.settings-item:not(:last-child) {
-  border-bottom: 1px solid var(--surface-elevated);
+/* iOS-style transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition-duration: 200ms;
 }
 
-.settings-item:hover {
-  background: var(--surface-elevated);
+.transition-colors {
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition-duration: 200ms;
 }
 
-.settings-item:active {
-  background: var(--surface-elevated);
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition-duration: 200ms;
 }
 
-/* ============================================
-   CARD ASPECT RATIO (Credit card proportions)
-   ============================================ */
-.card-aspect {
-  aspect-ratio: 1.586;
+/* PWA standalone mode adjustments */
+@media all and (display-mode: standalone) {
+  body {
+    /* Extra padding for home indicator on newer iPhones */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Disable iOS callout */
+* {
+  -webkit-touch-callout: none;
+}
+
+/* Font weight utilities that might be missing */
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
 }

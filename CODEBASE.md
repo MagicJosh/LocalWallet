@@ -1,6 +1,18 @@
 # LocalWallet PWA - Codebase Documentation
 
-A Progressive Web App for storing loyalty/membership cards offline on your phone.
+A privacy-first, offline-first Progressive Web App for storing loyalty/membership cards.
+Apple Wallet-inspired design with custom spring physics navigation.
+
+---
+
+## Architecture Overview
+
+**Key Design Decisions:**
+- **No React Router** - Custom ViewStack navigation with iOS-style push/pop animations
+- **React Spring** - Physics-based animations for native feel
+- **@use-gesture** - Touch gestures (swipe to go back, swipe to delete)
+- **LocalStorage** - All data stays on device, 100% offline
+- **Tailwind CSS** - Utility-first styling with custom design tokens
 
 ---
 
@@ -9,228 +21,207 @@ A Progressive Web App for storing loyalty/membership cards offline on your phone
 ```
 LocalWalletPWA/
 ├── src/
-│   ├── components/          # Reusable UI components
-│   │   ├── ScannerModal.tsx  # Camera barcode scanner modal
-│   │   ├── BarcodeView.tsx   # Renders barcodes using react-barcode
-│   │   ├── CardTile.tsx      # Card preview tile (legacy)
-│   │   ├── EmptyState.tsx    # "No cards" placeholder
-│   │   ├── Icons.tsx         # Custom SVG icons (legacy)
-│   │   ├── LogoAvatar.tsx    # Store logo/initials avatar
-│   │   └── SearchBar.tsx     # Search input (legacy)
+│   ├── lib/                    # Core utilities
+│   │   ├── ViewStack.tsx       # Custom navigation system
+│   │   └── theme.ts            # Design tokens & brand colors
 │   │
-│   ├── pages/               # Main app screens
-│   │   ├── Dashboard.tsx     # Home screen - card list + FAB
-│   │   ├── AddCard.tsx       # Add new card form
-│   │   ├── CardDetail.tsx    # View card + barcode
-│   │   └── Settings.tsx      # App settings
+│   ├── components/             # Reusable UI components
+│   │   └── WalletCard.tsx      # Card component with gestures
 │   │
-│   ├── services/            # Business logic & data
-│   │   ├── storage.ts        # LocalStorage CRUD operations
-│   │   ├── brandService.ts   # Logo fetching & brand colors
-│   │   └── barcodeService.ts # Barcode format detection
+│   ├── views/                  # App screens (pages)
+│   │   ├── Dashboard.tsx       # Home - card list
+│   │   ├── AddCard.tsx         # Add new card form
+│   │   ├── CardDetail.tsx      # View card + barcode
+│   │   ├── Scanner.tsx         # Camera barcode scanner
+│   │   └── Settings.tsx        # Export/Import/Delete
 │   │
-│   ├── types/               # TypeScript definitions
-│   │   └── card.ts           # Card interface & BarcodeFormat type
+│   ├── services/               # Business logic
+│   │   ├── storage.ts          # LocalStorage CRUD
+│   │   ├── brandService.ts     # Logo fetching
+│   │   └── barcodeService.ts   # Barcode format detection
 │   │
-│   ├── App.tsx              # Router setup
-│   ├── main.tsx             # App entry point
-│   └── index.css            # Global styles & Tailwind
+│   ├── types/                  # TypeScript definitions
+│   │   └── card.ts             # Card interface
+│   │
+│   ├── App.tsx                 # Root component + ViewStack
+│   ├── main.tsx                # Entry point
+│   └── index.css               # Global styles
 │
-├── public/                  # Static assets
-│   └── icons/               # PWA icons (192x192, 512x512)
+├── public/                     # Static assets
+│   └── icons/                  # PWA icons
 │
-├── index.html               # HTML template with PWA meta tags
-├── vite.config.ts           # Vite + PWA plugin config
-├── tailwind.config.js       # Tailwind CSS config
-└── package.json             # Dependencies
+└── vite.config.ts              # Vite + PWA config
 ```
 
 ---
 
-## Key Files Explained
+## Navigation System
 
-### Pages (Screens)
+### ViewStack (src/lib/ViewStack.tsx)
 
-| File | Purpose | Route |
-|------|---------|-------|
-| `Dashboard.tsx` | Main screen showing all cards, search bar, and floating "+" button | `/` |
-| `AddCard.tsx` | Form to add new card with live preview, camera scanner, barcode format picker | `/add` |
-| `CardDetail.tsx` | Full card view with barcode, Clearbit logo, delete confirmation | `/card/:id` |
-| `Settings.tsx` | Stats dashboard, "Delete All Data" button | `/settings` |
+Custom navigation replacing React Router. Features:
+- iOS-style push/pop animations (slide from right)
+- Swipe-right to go back gesture
+- Spring physics for smooth animations
+- View stack management
 
-### Components
+**Usage:**
+```typescript
+const { push, pop, replace } = useViewStack();
 
-| File | Purpose | Used In |
-|------|---------|---------|
-| `ScannerModal.tsx` | Full-screen camera scanner using html5-qrcode library | AddCard |
+// Navigate to a view
+push('detail', { cardId: '123' });
 
-### Services (Data Layer)
+// Go back
+pop();
 
-| File | Purpose |
-|------|---------|
-| `storage.ts` | All LocalStorage operations - create, read, update, delete cards |
-| `brandService.ts` | Fetches logos from Clearbit, manages brand colors |
-| `barcodeService.ts` | Auto-detects barcode format from card number |
+// Replace current view
+replace('dashboard');
+```
+
+**View Types:** `dashboard` | `add` | `detail` | `settings` | `scanner`
 
 ---
 
-## How to Modify Common Things
+## Key Components
 
-### Want to change the app colors?
+### WalletCard (src/components/WalletCard.tsx)
 
-**File:** `src/index.css`
+Credit card-style component with:
+- Brand gradient backgrounds
+- Clearbit logo integration
+- Swipe-left to delete gesture
+- Press animation feedback
+- Favorite indicator
 
-```css
-:root {
-  --background: #000000;       /* App background */
-  --surface: #0f172a;          /* Card/input backgrounds */
-  --primary: #3b82f6;          /* Blue accent color */
-  --primary-dark: #2563eb;     /* Button backgrounds */
+**Props:**
+```typescript
+interface WalletCardProps {
+  card: Card;
+  onClick?: () => void;
+  onSwipeDelete?: () => void;
 }
 ```
 
-### Want to add a new brand color?
+---
 
-**File:** `src/services/brandService.ts`
+## Views
 
-Add to the `BRAND_COLORS` object:
+| View | Route | Description |
+|------|-------|-------------|
+| Dashboard | `/` | Card list with search, FAB to add |
+| AddCard | `/add` | Form with live preview, camera scanner |
+| CardDetail | `/card/:id` | Barcode display, brightness boost, delete |
+| Scanner | `/scanner` | Full-screen camera barcode scanner |
+| Settings | `/settings` | Export/Import JSON, delete all data |
+
+---
+
+## Features
+
+### Barcode Scanning
+- Uses `html5-qrcode` library
+- Supports: CODE128, EAN-13, EAN-8, UPC, CODE39, QR
+- Manual entry fallback if camera fails
+
+### Brightness Boost
+- Increases screen brightness when viewing barcode
+- Uses CSS filter for cross-browser support
+- Auto-resets when leaving view
+
+### Export/Import
+- Export all cards as JSON file
+- Import cards from JSON backup
+- Useful for device migration
+
+### Swipe Gestures
+- Swipe right: Go back (enabled on all views except scanner)
+- Swipe left on card: Delete card
+
+---
+
+## Design Tokens (src/lib/theme.ts)
+
+### Colors
 ```typescript
-const BRAND_COLORS: Record<string, string> = {
-  'ikea': '#0058A3',
-  'your-store': '#FF0000',  // Add here
+colors.background   // #000000 - Pure black
+colors.surface      // #1C1C1E - Elevated surface
+colors.accent       // #007AFF - iOS blue
+colors.error        // #FF3B30 - iOS red
+colors.success      // #34C759 - iOS green
+```
+
+### Spring Configs
+```typescript
+springConfigs.ios     // iOS-style spring animation
+springConfigs.snappy  // Quick interactions
+springConfigs.gentle  // Large movements
+```
+
+### Brand Colors
+Pre-defined gradients for popular stores:
+- IKEA, Coop, Leroy Merlin, Target, Starbucks
+- Costco, Walmart, Amazon, Nike, Adidas
+- Lidl, Aldi, Carrefour, Decathlon, etc.
+
+---
+
+## Storage (src/services/storage.ts)
+
+All data stored in `localStorage` under key `LOCAL_WALLET_CARDS`.
+
+### Card Object
+```typescript
+interface Card {
+  id: string;
+  storeName: string;
+  cardNumber: string;
+  logoUrl: string | null;
+  brandColor: string;        // Tailwind gradient classes
+  barcodeFormat: BarcodeFormat;
+  isFavorite: boolean;
+  createdAt: number;
+  lastUsedAt: number | null;
+}
+```
+
+### Functions
+| Function | Description |
+|----------|-------------|
+| `getAllCards()` | Get all cards (favorites first) |
+| `createCard(input)` | Create new card |
+| `getCardById(id)` | Get single card |
+| `deleteCard(id)` | Delete card |
+| `toggleFavorite(id)` | Toggle favorite |
+| `markAsUsed(id)` | Update lastUsedAt |
+| `exportCards()` | Export as JSON string |
+| `importCards(json)` | Import from JSON |
+
+---
+
+## How to Modify
+
+### Add a new brand color
+Edit `src/lib/theme.ts`:
+```typescript
+export const brandColors = {
+  'newstore': { gradient: 'from-red-500 to-pink-500', primary: '#FF0000' },
   // ...
 };
 ```
 
-### Want to change the card gradient colors?
+### Add a new barcode format
+1. Edit `src/types/card.ts` to add the format type
+2. Edit `src/services/barcodeService.ts` to add detection logic
 
-**File:** `src/pages/AddCard.tsx`
-
-Find the `getBrandGradient()` function:
+### Change animations
+Edit spring configs in `src/lib/theme.ts`:
 ```typescript
-function getBrandGradient(storeName: string): string {
-  const name = storeName.toLowerCase();
-  if (name.includes('ikea')) return 'from-blue-600 to-yellow-500';
-  if (name.includes('your-store')) return 'from-red-500 to-pink-500';
-  // ...
-}
+export const springConfigs = {
+  ios: { tension: 300, friction: 28, mass: 0.8 },
+  // Increase tension = faster, increase friction = more damping
+};
 ```
-
-### Want to add a new barcode format?
-
-**File:** `src/types/card.ts`
-```typescript
-export type BarcodeFormat = 'CODE128' | 'EAN13' | 'YOUR_FORMAT';
-```
-
-**File:** `src/services/barcodeService.ts`
-```typescript
-// Add detection logic in detectBarcodeFormat()
-// Add display name in getFormatDisplayName()
-// Add to getAllFormats() array
-```
-
-### Want to change the scanner appearance?
-
-**File:** `src/components/ScannerModal.tsx`
-
-Key classes to modify:
-- Scanning box size: `w-[85%] max-w-sm aspect-[1.8]`
-- Corner markers: `border-blue-500` (change color)
-- Laser line: `bg-red-500/80` (change to any color)
-
-### Want to change the floating button (FAB)?
-
-**File:** `src/pages/Dashboard.tsx`
-
-Find the FAB near the bottom:
-```tsx
-<Link
-  to="/add"
-  className="w-16 h-16 bg-blue-600 rounded-full ..."
->
-```
-
-### Want to add a new page/route?
-
-1. Create page in `src/pages/NewPage.tsx`
-2. Add route in `src/App.tsx`:
-```tsx
-<Route path="/new-page" element={<NewPage />} />
-```
-
----
-
-## Data Storage
-
-All data is stored in `localStorage` under the key `LOCAL_WALLET_CARDS`.
-
-### Card Object Structure
-```typescript
-interface Card {
-  id: string;              // Unique ID (timestamp + random)
-  storeName: string;       // "IKEA", "Target", etc.
-  cardNumber: string;      // The barcode number
-  logoUrl: string | null;  // Clearbit logo URL
-  brandColor: string;      // Hex color or Tailwind gradient
-  barcodeFormat: BarcodeFormat;  // 'CODE128', 'EAN13', etc.
-  isFavorite: boolean;     // Pinned to top
-  createdAt: number;       // Timestamp
-  lastUsedAt: number | null;  // Last viewed timestamp
-}
-```
-
-### Storage Functions (in `storage.ts`)
-
-| Function | What it does |
-|----------|--------------|
-| `getAllCards()` | Get all cards, sorted by favorite > last used > created |
-| `createCard(input)` | Create new card with auto-fetched logo/color |
-| `getCardById(id)` | Get single card by ID |
-| `updateCard(id, updates)` | Partial update a card |
-| `deleteCard(id)` | Delete a card |
-| `toggleFavorite(id)` | Toggle favorite status |
-| `markAsUsed(id)` | Update lastUsedAt timestamp |
-| `exportCards()` | Export all cards as JSON string |
-| `importCards(json)` | Import cards from JSON string |
-
----
-
-## Styling System
-
-### CSS Classes (in `index.css`)
-
-| Class | Purpose |
-|-------|---------|
-| `pt-safe-top` | Padding for iPhone notch |
-| `pb-safe-bottom` | Padding for home indicator |
-| `active-shrink` | Button press animation (scale 0.95) |
-| `blur-header` | Frosted glass header effect |
-| `input-native` | 56px tall native-style input |
-| `card-aspect` | Credit card aspect ratio (1.586) |
-
-### Tailwind Patterns Used
-
-- **Gradients:** `bg-gradient-to-br from-blue-600 to-yellow-500`
-- **Shadows:** `shadow-2xl shadow-blue-500/50`
-- **Backdrop blur:** `backdrop-blur-xl bg-black/80`
-- **Safe areas:** `pt-safe-top pb-safe-bottom`
-
----
-
-## External Services
-
-### Clearbit Logo API
-```
-https://logo.clearbit.com/{company}.com
-```
-Used in: `CardPreview` components, `CardDetail.tsx`
-
-### html5-qrcode Library
-Used for camera scanning in `ScannerModal.tsx`
-
-### react-barcode Library
-Used to render barcodes in `CardDetail.tsx`
 
 ---
 
@@ -243,18 +234,17 @@ npm run dev
 # Production build
 npm run build
 
-# Preview production build
+# Preview production
 npm run preview
 ```
 
-Build output goes to `dist/` folder. Deploy this to any static host (Vercel, Netlify, GitHub Pages).
+Deploy `dist/` folder to Vercel, Netlify, or any static host.
 
 ---
 
 ## PWA Features
 
-- **Offline:** Works without internet (service worker caches everything)
-- **Installable:** "Add to Home Screen" on iOS/Android
+- **Offline:** Service worker caches all assets
+- **Installable:** Add to home screen on iOS/Android
 - **Safe areas:** Handles iPhone notch and home indicator
-
-PWA config is in `vite.config.ts` under `VitePWA` plugin.
+- **No tracking:** Zero analytics, no data sent anywhere

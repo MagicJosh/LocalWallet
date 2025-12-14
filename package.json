@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@use-gesture/react": "^10.3.1",
     "@vercel/speed-insights": "^1.2.0",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.554.0",
@@ -17,6 +18,7 @@
     "react-barcode": "^1.6.1",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6",
+    "react-spring": "^10.0.3",
     "vite-plugin-pwa": "^1.1.0",
     "workbox-window": "^7.4.0"
   },
