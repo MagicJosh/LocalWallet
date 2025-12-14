@@ -92,7 +92,7 @@ export function AddCard() {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        <div className="px-5 py-4 flex items-center justify-between">
+        <div className="app-container py-4 flex items-center justify-between">
           <button
             onClick={() => pop()}
             className="flex items-center gap-2 text-blue-500 active:opacity-70"
@@ -112,7 +112,10 @@ export function AddCard() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 px-5 pb-8 overflow-y-auto">
+      <main
+        className="flex-1 pb-8 overflow-y-auto app-container"
+        style={{ paddingBottom: 'calc(32px + env(safe-area-inset-bottom, 20px))' }}
+      >
         {/* Live Preview */}
         <animated.div
           style={{
@@ -128,9 +131,9 @@ export function AddCard() {
         </animated.div>
 
         {/* Form */}
-        <div className="space-y-6">
+        <div className="space-y-7">
           {/* Store Name */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
               Store Name
             </label>
@@ -145,7 +148,7 @@ export function AddCard() {
           </div>
 
           {/* Card Number with Scanner Button */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
               Card Number
             </label>
@@ -170,7 +173,7 @@ export function AddCard() {
           </div>
 
           {/* Barcode Format Selector */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
               Barcode Format
             </label>
@@ -225,7 +228,7 @@ export function AddCard() {
           }}
           onClick={handleSubmit}
           disabled={!isValid || isSubmitting}
-          className="w-full h-14 mt-10 bg-blue-500 disabled:bg-gray-800 disabled:text-gray-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:shadow-none active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+          className="w-full h-14 mt-12 bg-blue-500 disabled:bg-gray-800 disabled:text-gray-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 disabled:shadow-none active:scale-[0.98] transition-all flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

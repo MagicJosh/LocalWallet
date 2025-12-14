@@ -94,7 +94,7 @@ export function Settings() {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        <div className="px-5 py-4 flex items-center justify-between">
+        <div className="app-container py-4 flex items-center justify-between">
           <button
             onClick={pop}
             className="flex items-center gap-2 text-blue-500 active:opacity-70"
@@ -112,9 +112,12 @@ export function Settings() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 px-5 pb-8 overflow-y-auto">
+      <main
+        className="flex-1 pb-8 overflow-y-auto app-container"
+        style={{ paddingBottom: 'calc(32px + env(safe-area-inset-bottom, 20px))' }}
+      >
         {/* Stats Dashboard */}
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-2 gap-5 mt-5">
           <div className="bg-white/5 rounded-2xl p-5 flex flex-col items-center justify-center">
             <animated.span className="text-3xl font-bold text-blue-500">
               {statsSpring.number.to(n => Math.floor(n))}
@@ -137,8 +140,8 @@ export function Settings() {
         </div>
 
         {/* Data Management Section */}
-        <div className="mt-8">
-          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-3">
+        <div className="mt-10">
+          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-4">
             Data Management
           </h2>
 
@@ -218,8 +221,8 @@ export function Settings() {
         )}
 
         {/* Danger Zone */}
-        <div className="mt-8">
-          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-3">
+        <div className="mt-10">
+          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-4">
             Danger Zone
           </h2>
 
@@ -261,7 +264,7 @@ export function Settings() {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 flex flex-col items-center justify-center opacity-40">
+        <div className="mt-14 flex flex-col items-center justify-center opacity-40">
           <div className="w-8 h-8 text-red-500 mb-2">
             <svg fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />

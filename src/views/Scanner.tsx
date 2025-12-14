@@ -8,9 +8,9 @@
  * - Animated viewfinder
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSpring, animated } from 'react-spring';
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats, Html5QrcodeScannerState } from 'html5-qrcode';
 import { useViewStack } from '../lib/ViewStack';
 
 export function Scanner() {
@@ -22,9 +22,14 @@ export function Scanner() {
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [manualCode, setManualCode] = useState('');
   const [scanResult, setScanResult] = useState<string | null>(null);
+  const [restartToken, setRestartToken] = useState(0);
 
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const restartScanner = useCallback(() => {
+    setRestartToken((token) => token + 1);
+  }, []);
 
   // Laser line animation
   const laserSpring = useSpring({
@@ -37,10 +42,13 @@ export function Scanner() {
   // Initialize scanner
   useEffect(() => {
     let html5QrCode: Html5Qrcode | null = null;
+    let isCancelled = false;
 
     const startScanner = async () => {
       try {
         setIsInitializing(true);
+        setHasPermission(null);
+        setScanResult(null);
 
         html5QrCode = new Html5Qrcode('scanner-container', {
           verbose: false,
@@ -61,8 +69,11 @@ export function Scanner() {
           { facingMode: 'environment' },
           {
             fps: 10,
-            qrbox: { width: 280, height: 150 },
-            aspectRatio: window.innerHeight / window.innerWidth,
+            qrbox: (viewfinderWidth: number, viewfinderHeight: number) => ({
+              width: Math.floor(viewfinderWidth * 0.8),
+              height: Math.floor(viewfinderHeight * 0.3),
+            }),
+            aspectRatio: window.innerWidth / window.innerHeight,
           },
           (decodedText) => {
             // Successfully scanned
@@ -86,6 +97,11 @@ export function Scanner() {
           }
         );
 
+        if (isCancelled) {
+          html5QrCode.stop().catch(() => {});
+          return;
+        }
+
         setHasPermission(true);
         setIsInitializing(false);
       } catch (error) {
@@ -99,11 +115,68 @@ export function Scanner() {
 
     // Cleanup
     return () => {
+      isCancelled = true;
       if (html5QrCode) {
         html5QrCode.stop().catch(() => {});
       }
+      if (scannerRef.current === html5QrCode) {
+        scannerRef.current = null;
+      }
     };
-  }, [onScan, pop]);
+  }, [onScan, pop, restartToken]);
+
+  // Pause/resume camera scanning while manual entry is open (iOS can pause video when keyboard opens)
+  useEffect(() => {
+    const scanner = scannerRef.current;
+    if (!scanner) return;
+
+    if (showManualEntry) {
+      try {
+        if (scanner.getState() === Html5QrcodeScannerState.SCANNING) {
+          scanner.pause(true);
+        }
+      } catch {
+        // Ignore - scanner might not be running yet
+      }
+      return;
+    }
+
+    let timeoutId: number | undefined;
+
+    const resumeOrRestartIfNeeded = () => {
+      const activeScanner = scannerRef.current;
+      if (!activeScanner) return;
+
+      try {
+        if (activeScanner.getState() === Html5QrcodeScannerState.PAUSED) {
+          activeScanner.resume();
+        }
+      } catch {
+        // Ignore - we'll fallback to restart checks below
+      }
+
+      timeoutId = window.setTimeout(() => {
+        const currentScanner = scannerRef.current;
+        if (!currentScanner) return;
+
+        const state = currentScanner.getState();
+        const video = containerRef.current?.querySelector('video');
+        const isVideoStalled = !!video && (video.paused || video.readyState === 0);
+
+        if (state === Html5QrcodeScannerState.NOT_STARTED || isVideoStalled) {
+          restartScanner();
+        }
+      }, 250);
+    };
+
+    resumeOrRestartIfNeeded();
+
+    return () => {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [showManualEntry, restartScanner]);
 
   // Handle manual entry
   const handleManualSubmit = () => {
@@ -165,7 +238,7 @@ export function Scanner() {
         className="absolute top-0 left-0 right-0 z-10"
         style={{ paddingTop: 'env(safe-area-inset-top, 20px)' }}
       >
-        <div className="px-5 py-4 flex items-center justify-between">
+        <div className="app-container py-4 flex items-center justify-between">
           <button
             onClick={handleClose}
             className="w-10 h-10 bg-black/40 backdrop-blur rounded-full flex items-center justify-center active:scale-95"
@@ -233,46 +306,57 @@ export function Scanner() {
 
       {/* Bottom actions */}
       <div
-        className="absolute bottom-0 left-0 right-0 p-5"
-        style={{ paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 20px))' }}
+        className="absolute bottom-0 left-0 right-0"
       >
-        <button
-          onClick={() => setShowManualEntry(true)}
-          className="w-full py-4 bg-white text-black rounded-xl font-semibold active:scale-[0.98] transition-transform"
+        <div
+          className="app-container pt-5"
+          style={{ paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 20px))' }}
         >
-          Enter Code Manually
-        </button>
+          <button
+            onClick={() => setShowManualEntry(true)}
+            className="w-full py-4 bg-white text-black rounded-xl font-semibold active:scale-[0.98] transition-transform"
+          >
+            Enter Code Manually
+          </button>
+        </div>
       </div>
 
       {/* Manual entry modal */}
       {showManualEntry && (
-        <div className="absolute inset-0 bg-black/90 flex items-center justify-center p-6 z-20">
-          <div className="w-full max-w-sm bg-gray-900 rounded-2xl p-6">
-            <h3 className="text-white font-semibold text-lg mb-4">Enter Barcode</h3>
+        <div className="absolute inset-0 z-20 flex flex-col justify-end bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-[480px] mx-auto animate-slide-up">
+            <div
+              className="bg-gray-900/95 rounded-t-3xl px-6 pt-4"
+              style={{ paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 20px))' }}
+            >
+              <div className="w-10 h-1 bg-white/15 rounded-full mx-auto mb-4" />
 
-            <input
-              type="text"
-              value={manualCode}
-              onChange={(e) => setManualCode(e.target.value)}
-              placeholder="Card number or barcode"
-              className="w-full h-14 bg-black/50 rounded-xl px-4 font-mono text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-              autoFocus
-            />
+              <h3 className="text-white font-semibold text-lg mb-3">Enter Barcode</h3>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowManualEntry(false)}
-                className="flex-1 py-3 bg-white/10 text-white rounded-xl font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleManualSubmit}
-                disabled={!manualCode.trim()}
-                className="flex-1 py-3 bg-blue-500 disabled:bg-gray-700 text-white rounded-xl font-semibold"
-              >
-                Done
-              </button>
+              <input
+                type="text"
+                value={manualCode}
+                onChange={(e) => setManualCode(e.target.value)}
+                placeholder="Card number or barcode"
+                className="w-full h-16 bg-black/50 rounded-2xl px-4 font-mono text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+                autoFocus
+              />
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowManualEntry(false)}
+                  className="flex-1 h-12 bg-white/10 text-white rounded-full font-semibold active:scale-[0.98] transition-transform"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleManualSubmit}
+                  disabled={!manualCode.trim()}
+                  className="flex-1 h-12 bg-blue-500 disabled:bg-gray-700 text-white rounded-full font-semibold active:scale-[0.98] transition-transform"
+                >
+                  Done
+                </button>
+              </div>
             </div>
           </div>
         </div>

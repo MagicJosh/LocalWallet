@@ -78,7 +78,7 @@ export function Dashboard() {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        <div className="px-5 py-4 flex items-center justify-between">
+        <div className="app-container py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@ export function Dashboard() {
         </div>
 
         {/* Search bar */}
-        <div className="px-5 pb-4">
+        <div className="app-container pb-4">
           <div className="relative">
             <svg
               className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
@@ -133,7 +133,7 @@ export function Dashboard() {
 
       {/* Main content */}
       <main
-        className="flex-1 px-5 pb-32 overflow-y-auto"
+        className="flex-1 pb-32 overflow-y-auto app-container"
         style={{ paddingBottom: 'calc(120px + env(safe-area-inset-bottom, 20px))' }}
       >
         {isLoading ? (

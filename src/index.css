@@ -53,6 +53,16 @@ html, body {
   overflow: hidden;
 }
 
+/* Phone-first content container (keeps the UI feeling like an iPhone app) */
+.app-container {
+  width: 100%;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: calc(20px + env(safe-area-inset-left, 0px));
+  padding-right: calc(20px + env(safe-area-inset-right, 0px));
+}
+
 /* Hide scrollbars but allow scrolling */
 ::-webkit-scrollbar {
   display: none;
@@ -170,16 +180,18 @@ input::placeholder {
   aspect-ratio: 1.586;
 }
 
-/* Hide html5-qrcode default UI */
+/* Hide html5-qrcode default UI (app renders a custom viewfinder overlay) */
 #reader__scan_region,
 #reader__dashboard_section_csr,
 #reader__dashboard_section,
 #reader__dashboard_section_swaplink,
 #reader__camera_selection,
-#reader > div:first-child {
+#reader > div:first-child,
+#qr-shaded-region {
   display: none !important;
 }
 
+#scanner-container video,
 #reader video {
   object-fit: cover !important;
   width: 100% !important;
@@ -187,6 +199,7 @@ input::placeholder {
   border-radius: 0 !important;
 }
 
+#scanner-container,
 #reader {
   border: none !important;
   width: 100% !important;

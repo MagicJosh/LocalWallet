@@ -113,7 +113,7 @@ export function CardDetail() {
           backgroundColor: isBrightMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)',
         }}
       >
-        <div className="px-5 py-4 flex items-center justify-between">
+        <div className="app-container py-4 flex items-center justify-between">
           <button
             onClick={pop}
             className={`w-10 h-10 rounded-full flex items-center justify-center active:scale-95 transition-all ${
@@ -159,7 +159,10 @@ export function CardDetail() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 px-5 pb-8 overflow-y-auto">
+      <main
+        className="flex-1 pb-8 overflow-y-auto app-container"
+        style={{ paddingBottom: 'calc(32px + env(safe-area-inset-bottom, 20px))' }}
+      >
         {/* Hero Card */}
         <div
           className={`w-full aspect-[1.586] rounded-3xl shadow-2xl relative overflow-hidden bg-gradient-to-br ${brandStyle.gradient}`}
