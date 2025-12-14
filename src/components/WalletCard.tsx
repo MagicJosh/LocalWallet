@@ -237,7 +237,7 @@ export function WalletCardPreview({ storeName, cardNumber }: WalletCardPreviewPr
         </div>
 
         <span className="font-mono text-base text-white/90 tracking-wider drop-shadow-sm">
-          {cardNumber || '•••• •••• •••• ••••'}
+          {cardNumber || ''}
         </span>
       </div>
     </div>

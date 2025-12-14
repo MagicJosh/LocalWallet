@@ -117,7 +117,7 @@ export function Settings() {
         style={{ paddingBottom: 'calc(32px + env(safe-area-inset-bottom, 20px))' }}
       >
         {/* Stats Dashboard */}
-        <div className="grid grid-cols-2 gap-5 mt-5">
+        <div className="grid grid-cols-2 gap-5 mt-8">
           <div className="bg-white/5 rounded-2xl p-5 flex flex-col items-center justify-center">
             <animated.span className="text-3xl font-bold text-blue-500">
               {statsSpring.number.to(n => Math.floor(n))}
@@ -140,8 +140,8 @@ export function Settings() {
         </div>
 
         {/* Data Management Section */}
-        <div className="mt-10">
-          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-4">
+        <div className="mt-12">
+          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-5">
             Data Management
           </h2>
 
@@ -221,8 +221,8 @@ export function Settings() {
         )}
 
         {/* Danger Zone */}
-        <div className="mt-10">
-          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-4">
+        <div className="mt-12">
+          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-5">
             Danger Zone
           </h2>
 

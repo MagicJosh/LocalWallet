@@ -125,6 +125,20 @@ export function Scanner() {
     };
   }, [onScan, pop, restartToken]);
 
+  // Ensure video plays on iOS (Safari can be finicky about autoplay)
+  useEffect(() => {
+    if (hasPermission && containerRef.current) {
+      const video = containerRef.current.querySelector('video');
+      if (video) {
+        video.setAttribute('playsinline', 'true');
+        video.setAttribute('webkit-playsinline', 'true');
+        if (video.paused) {
+          video.play().catch(() => {});
+        }
+      }
+    }
+  }, [hasPermission]);
+
   // Pause/resume camera scanning while manual entry is open (iOS can pause video when keyboard opens)
   useEffect(() => {
     const scanner = scannerRef.current;
@@ -203,7 +217,7 @@ export function Scanner() {
         id="scanner-container"
         ref={containerRef}
         className="absolute inset-0"
-        style={{ opacity: hasPermission ? 1 : 0 }}
+        style={{ opacity: hasPermission === false ? 0 : 1 }}
       />
 
       {/* Overlay with viewfinder cutout */}
